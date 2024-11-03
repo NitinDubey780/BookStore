@@ -9,10 +9,10 @@ router.put("/add-book-to-favourite", authenticateToken, async (req, res) => {
         const userData = await User.findById(id);
         const isBookFavourite = userData.favourites.includes(bookid);
         if(isBookFavourite) {
-            return res.status(200).json({ message: "Book is already in favourite"});
+            return res.status(200).json({ message: "Product is already in favourite"});
         }
         await User.findByIdAndUpdate(id, { $push: { favourites: bookid}  });
-        return res.status(200).json({ message: "Book added Successfully"});
+        return res.status(200).json({ message: "Product added Successfully"});
     } catch (error) {
         res.status(500).json({ message: "Internal Server error"});
     }
@@ -27,7 +27,7 @@ router.put("/remove-book-from-favourite", authenticateToken, async (req, res) =>
         if (isBookFavourite) {
             await User.findByIdAndUpdate(id, { $pull: { favourites: bookid} });
         }
-        return res.status(200).json({ message: "Book Removed from favourite"});
+        return res.status(200).json({ message: "Product Removed from favourite"});
     } catch (error) {
         res.status(500).json({ message: "Internal server error"})
     }

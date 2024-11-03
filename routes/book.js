@@ -22,7 +22,7 @@ router.post("/add-book", authenticateToken, async (req, res) => {
             language: req.body.language,
         });
         await book.save();
-        res.status(200).json({ message: "Book added Successfully"})
+        res.status(200).json({ message: "Product added Successfully"})
     } catch(error) {
         res.status(500).json({ message: "Internal Server error"});
     }
@@ -40,7 +40,7 @@ router.put("/update-book", authenticateToken, async (req, res) => {
             desc: req.body.desc,
             language: req.body.language,
         });
-        return res.status(200).json({ message: "Book Upadated Successfully"});
+        return res.status(200).json({ message: "Product Upadated Successfully"});
     } catch(error) {
         res.status(500).json({ message: "An error occured"});
     }
@@ -52,7 +52,7 @@ router.delete("/delete-book", authenticateToken, async (req, res) => {
         const { bookid } = req.headers;
         await Book.findByIdAndDelete(bookid);
         return res.status(200).json({
-            message: "Book Deleted Successfully",
+            message: "Product Deleted Successfully",
         });
     } catch (error) {
         return res.status(500).json({ message: "An Error occurred"});

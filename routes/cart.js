@@ -10,7 +10,7 @@ router.put("/add-to-cart", authenticateToken, async (req, res) => {
         if (isBookinCart) {
             return res.json({
                 status: "Success",
-                message: "Book is already in cart",
+                message: "Product is already in cart",
             });
         }
         await User.findByIdAndUpdate(id, {
@@ -19,7 +19,7 @@ router.put("/add-to-cart", authenticateToken, async (req, res) => {
 
         return res.json({
             status: "Success",
-            message: "Book added to cart",
+            message: "Product added to cart",
         });
     } catch (error) {
         console.log(error);
@@ -38,7 +38,7 @@ router.put("/remove-from-cart/:bookid", authenticateToken, async (req, res) => {
 
         return res.json({
             status: "Success",
-            message: "Book removed from cart",
+            message: "Product removed from cart",
         });
     } catch {error} {
         console.log(error);
