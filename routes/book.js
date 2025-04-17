@@ -98,4 +98,27 @@ router.get("/get-book-by-id/:id", async (req, res) => {
         return res.status(500).json({ message: "An error occured"});
     }
 });
+// Get books by category
+router.get("/category/:category", async (req, res) => {
+    try {
+      const books = await Book.find({ category: req.params.category });
+      res.status(200).json({ books });
+    } catch (error) {
+      res.status(500).json({ error: "Failed to fetch books by category" });
+    }
+  });
+  // Search books by title
+router.get("/search", async (req, res) => {
+    try {
+      const query = req.query.q;
+      const books = await Book.find({
+        title: { $regex: query, $options: "i" },
+      });
+      res.status(200).json({ books });
+    } catch (err) {
+      res.status(500).json({ error: "Search failed" });
+    }
+  });
+  
+  
 module.exports = router;
