@@ -91,5 +91,14 @@ router.put("/update-address", authenticateToken, async (req, res) => {
         res.status(500).json({ message: "Internal server error" });
     }
 });
+router.get('/count', async (req, res) => {
+    try {
+      const userCount = await user.countDocuments({ role: "user" });
+      res.json({ count: userCount });
+    } catch (err) {
+      res.status(500).json({ error: err.message });
+    }
+  });
+  
 
 module.exports = router;

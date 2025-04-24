@@ -119,6 +119,15 @@ router.get("/search", async (req, res) => {
       res.status(500).json({ error: "Search failed" });
     }
   });
+router.get('/count', async (req, res) => {
+    try {
+      const bookCount = await Book.countDocuments();
+      res.json({ count: bookCount });
+    } catch (err) {
+      res.status(500).json({ error: err.message });
+    }
+  });
+  
   
   
 module.exports = router;

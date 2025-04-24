@@ -2,7 +2,9 @@ const router = require("express").Router();
 const { authenticateToken } = require("./userAuth");
 const Book = require("../models/book");
 const Order = require("../models/order");
-const User = require("../models/user")
+const User = require("../models/user");
+const PDFDocument = require('pdfkit');
+const fs = require('fs');
 
 router.post("/place-order", authenticateToken, async (req, res) => {
     try {
@@ -84,4 +86,87 @@ router.put("/update-status/:id", authenticateToken, async (req, res) => {
         return res.status(500).json({ message: "An error occurred" });
     }
 });
+router.get("/count", async (req, res) => {
+    try {
+      const count = await Order.countDocuments();
+      res.status(200).json({ count });
+    } catch (error) {
+      res.status(500).json({ error: "Failed to fetch order count" });
+    }
+  });
+// route: GET /api/orders/stats
+router.get('/stats', async (req, res) => {
+    try {
+      const orderCount = await Order.countDocuments();
+      const totalIncome = await Order.aggregate([
+        { $group: { _id: null, total: { $sum: "$amount" } } }
+      ]);
+      res.json({
+        count: orderCount,
+        income: totalIncome[0]?.total || 0
+      });
+    } catch (err) {
+      res.status(500).json({ error: err.message });
+    }
+  });
+  
+router.get('/recent', async (req, res) => {
+    try {
+      const recentOrders = await Order.find()
+        .sort({ createdAt: -1 })
+        .limit(5);
+      res.json(recentOrders);
+    } catch (err) {
+      res.status(500).json({ error: err.message });
+    }
+  });
+
+
+  router.get("/daily-logins", async (req, res) => {
+    try {
+      const logins = await Login.aggregate([
+        {
+          $group: {
+            _id: {
+              $dateToString: { format: "%Y-%m-%d", date: "$date" }
+            },
+            count: { $sum: 1 }
+          }
+        },
+        { $sort: { _id: 1 } }
+      ]);
+      res.json(logins);
+    } catch (err) {
+      res.status(500).json({ error: "Something went wrong" });
+    }
+  });
+
+
+
+  router.get("/download-invoice/:id", async (req, res) => {
+    try {
+      const order = await Order.findById(req.params.id).populate("book").populate("user");
+      if (!order) return res.status(404).json({ error: "Order not found" });
+  
+      const doc = new PDFDocument();
+      const filePath = `invoices/invoice-${order._id}.pdf`;
+      doc.pipe(fs.createWriteStream(filePath));
+  
+      doc.fontSize(25).text("Invoice", { align: "center" });
+      doc.moveDown();
+      doc.text(`Customer: ${order.user.name}`);
+      doc.text(`Book: ${order.book.title}`);
+      doc.text(`Price: ₹ ${order.book.prize}`);
+      doc.text(`Status: ${order.status}`);
+      doc.end();
+  
+      doc.on("finish", () => {
+        res.download(filePath);
+      });
+    } catch (err) {
+      res.status(500).json({ error: "Failed to generate invoice" });
+    }
+  });
+  
+  
 module.exports = router;

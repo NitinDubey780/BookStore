@@ -15,11 +15,11 @@ app.use(express.json());
 
 
 //routes
-app.use("/api/v1", user);
-app.use("/api/v1", book);
-app.use("/api/v1/", Favourite);
-app.use("/api/v1/", Cart);
-app.use("/api/v1/", Order);
+app.use("/api/user", user);
+app.use("/api/book", book);
+app.use("/api/favourite/", Favourite);
+app.use("/api/cart/", Cart);
+app.use("/api/order/", Order);
 app.use("/api/payment", paymentRoutes);
 //creating port
 app.listen(process.env.PORT, () =>{
