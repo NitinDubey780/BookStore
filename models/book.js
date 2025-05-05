@@ -26,11 +26,6 @@ const book = new mongoose.Schema(
             type: String,
             required: true,
         },
-        // 📌 Add this line inside Book Schema
-        category: {
-            type: String,
-            required: true,
-        },
     },
 
     {timestamps: true }

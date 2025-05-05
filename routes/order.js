@@ -110,36 +110,6 @@ router.get('/stats', async (req, res) => {
     }
   });
   
-router.get('/recent', async (req, res) => {
-    try {
-      const recentOrders = await Order.find()
-        .sort({ createdAt: -1 })
-        .limit(5);
-      res.json(recentOrders);
-    } catch (err) {
-      res.status(500).json({ error: err.message });
-    }
-  });
-
-
-  router.get("/daily-logins", async (req, res) => {
-    try {
-      const logins = await Login.aggregate([
-        {
-          $group: {
-            _id: {
-              $dateToString: { format: "%Y-%m-%d", date: "$date" }
-            },
-            count: { $sum: 1 }
-          }
-        },
-        { $sort: { _id: 1 } }
-      ]);
-      res.json(logins);
-    } catch (err) {
-      res.status(500).json({ error: "Something went wrong" });
-    }
-  });
 
 
 
